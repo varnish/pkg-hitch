@@ -1,0 +1,30 @@
+#!/bin/bash
+# environment variables to set:
+# optionally:
+# set RELEASE (bionic, buster, etc.) if lsb_release isn't present
+# set NOUNPACK to a non-empty value to prevent the dist and debian tarballs
+# from being untar'd
+
+set -e
+
+if [ -z "$RELEASE" ]; then
+	RELEASE=$(lsb_release -c | cut -f2)
+	if [ -z "$RELEASE" ]; then
+		echo "RELEASE is not set and calling lsb_release didn't help"
+		exit 1
+	fi
+fi
+
+if [ -z "$NOUNPACK" ]; then
+	tar xavf hitch*.tar.gz --strip 1
+	tar xavf debian.tar.gz
+fi
+
+SRCVER=$(./configure --version | awk 'NR == 1 {print $NF}')
+sed -i -e "s/@SRCVER@/${SRCVER}/g" -e "s/@PKGVER@/${PKGVER:-1}/g" -e "s/@DISTVER@/$RELEASE/g" debian/changelog
+
+export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
+apt-get update -qq
+yes | mk-build-deps --install debian/control || true
+dpkg-buildpackage -us -uc -j16

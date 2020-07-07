@@ -1,0 +1,15 @@
+[Unit]
+Description=hitch
+After=syslog.target network-online.target
+
+[Service]
+Type=forking
+#Restart=on-failure
+LimitNOFILE=131072
+Environment="HITCH_OPTIONS=--config /etc/hitch/hitch.conf"
+ExecStartPre=/usr/sbin/hitch -t $HITCH_OPTIONS
+ExecStart=/usr/sbin/hitch $HITCH_OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

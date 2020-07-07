@@ -1,0 +1,47 @@
+#!/bin/bash
+# environment variables to set:
+# RELEASE (bionic, buster, etc.)
+# optionally:
+# set NOUNPACK to a non-empty value to prevent the dist and redhat tarballs
+# from being untar'd
+
+set -e
+
+DIST_DIR=${DIST_DIR:-build}
+RESULT_DIR="rpms"
+CUR_DIR="$(pwd)"
+
+if [ -z "$NOUNPACK" ]; then
+	rm -rf $DIST_DIR
+	mkdir $DIST_DIR
+
+	tar xaf hitch*.tar.gz -C $DIST_DIR --strip 1
+	tar xaf redhat.tar.gz -C $DIST_DIR --strip 1
+fi
+
+SRCVER=$($DIST_DIR/configure --version | awk 'NR == 1 {print $NF}')
+
+if [ -z "$SRCVER" ]; then
+	echo "SRCVER is empty, it shouldn't"
+	exit 1
+fi
+
+tar zcf "$DIST_DIR.tgz" "$DIST_DIR"/
+
+rpmbuild() {
+	command rpmbuild \
+		--define "_smp_mflags -j10" \
+		--define "_topdir $HOME/rpmbuild" \
+		--define "_sourcedir $CUR_DIR" \
+		--define "_srcrpmdir $CUR_DIR/${RESULT_DIR}" \
+		--define "_rpmdir $CUR_DIR/${RESULT_DIR}" \
+	        --define "versiontag ${SRCVER}" \
+		--define "releasetag ${PKGVER:-1}" \
+		--define "srcname $DIST_DIR" \
+		--define "nocheck 1" \
+		"$@"
+}
+
+yum-builddep -y "$DIST_DIR"/hitch.spec
+rpmbuild -bs "$DIST_DIR"/hitch.spec
+rpmbuild --rebuild "$RESULT_DIR"/hitch*.src.rpm

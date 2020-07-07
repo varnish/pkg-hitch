@@ -1,0 +1,28 @@
+Source: hitch
+Section: web
+Priority: optional
+Maintainer: Varnish Software AS <support@varnish-software.com>
+Build-Depends: debhelper (>= 7.0.50~),
+ libc6 (>= 2.4),
+ libev-dev (>= 1:4.04),
+ libssl-dev,
+ lsof,
+ python-docutils,
+ pkg-config,
+ flex,
+ bison
+# libssl0.9.8 (>= 0.9.8k-1) | libssl (>= 1.0.0e-1),
+Standards-Version: 3.9.2
+Homepage: https://github.com/varnish/hitch
+
+Package: hitch
+Section: web
+Priority: optional
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ssl-cert
+Suggests: varnish-plus
+Provides: hitch
+Description: Hitch TLS proxy
+ hitch is a network proxy that terminates TLS/SSL connections and forwards
+ the unencrypted traffic to some backend. It's designed to handle 10s of
+ thousands of connections efficiently on multicore machines.
