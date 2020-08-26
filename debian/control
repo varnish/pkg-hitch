@@ -20,7 +20,7 @@ Section: web
 Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, ssl-cert
-Suggests: varnish-plus
+Suggests: varnish
 Provides: hitch
 Description: Hitch TLS proxy
  hitch is a network proxy that terminates TLS/SSL connections and forwards
