@@ -1,5 +1,5 @@
 hitch (@SRCVER@-@PKGVER@~@DISTVER@) unstable; urgency=low
 
- * See CHANGES.rst for list of changes.
+  * See CHANGES.rst for list of changes.
 
  -- Dag Haavi Finstad <daghf@varnish-software.com>  Wed, 27 Nov 2019 10:35:52 +0100
