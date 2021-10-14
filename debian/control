@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 7.0.50~),
  libev-dev (>= 1:4.04),
  libssl-dev,
  lsof,
- python-docutils,
+ python-docutils | python3-docutils,
  pkg-config,
  flex,
  bison
